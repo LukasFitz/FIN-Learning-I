@@ -1,0 +1,29 @@
+<h2 style="margin-top:0px;">Dein Angebot</h2>
+<p style="font-size: 16px;">Hier siehst du, für welche Fächer du Mentoring anbietest.</p>
+<div *ngIf="sortModules()?.length === 0 || sortModules()?.length === null">
+  <i>Du bietest bisher noch kein Mentoring an. Klicke <u><a [routerLink]="['/profile']">hier</a></u> um unverbindlich
+    Mentoring für ein Fach anzubieten. Studenten, die Hilfe suchen, können sich anschließend mit Fragen an dich
+    wenden.</i>
+</div>
+<div *ngIf="sortModules() != null && sortModules().length > 0">
+  <div class="row align-middle mt-2 center" style="min-height: 50px;">
+    <div class="bg-dark col-xs-7" style="font-size:21px;">Modulname</div>
+    <div class="bg-dark col-xs-2" style="font-size:21px; padding:0px;">Note</div>
+    <div class="bg-dark col-xs-3">
+
+    </div>
+  </div>
+  <div class="scrollable" style="max-height:257px;">
+    <div class="row align-middle mt-2 center" style="min-height: 50px; "
+         *ngFor="let course of sortModules()">
+      <div class="bg-dark col-xs-7" style="margin-bottom: 5px;">{{course.course}}</div>
+      <div class="bg-dark col-xs-2" style="margin-bottom: 5px; padding:0px;">{{getDecimal(course.grade)}}</div>
+      <div class="bg-dark col-xs-3" style="margin-bottom: 5px;">
+        <label class="switch">
+          <input type="checkbox" [checked]="course.enabled" (change)="Change($event, course)">
+          <span class="toggle round"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

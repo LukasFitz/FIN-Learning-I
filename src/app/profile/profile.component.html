@@ -1,0 +1,183 @@
+<div class="jumbotron">
+  <h2 style="margin-top:0px;">Mein Profil</h2>
+  <p style="font-size: 16px;">Hier kannst du dein Profil bearbeiten.</p>
+
+  <div class="row align-middle" style="min-height: 40px; margin-right:15px;">
+    <div class="d-none d-sm-block col-xs-7" style="font-size:18px;">{{currentUserNickname ? currentUserNickname : 'Profil'}}</div>
+    <div class="d-none d-sm-block col-xs-2" style="font-size:18px;">{{currentUserForename ? currentUserForename : 'Profil'}}</div>
+    <div class="d-none d-sm-block col-xs-2" style="font-size:18px;">{{currentUserLastname ? currentUserLastname : 'Profil'}}</div>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <h2 style="margin-top:0px;">Meine Module</h2>
+  <p style="font-size: 16px;">Hier findest du die Module, die du bereits abgeschlossen hast und kannst deine Noten
+    bearbeiten.</p>
+
+  <div class="row align-middle" style="min-height: 40px; margin-right:15px;">
+    <div class="d-none d-sm-block col-xs-7" style="font-size:18px;">Modulname</div>
+    <div class="d-none d-sm-block col-xs-2" style="font-size:18px;">Note</div>
+    <div class="d-none d-sm-block col-xs-2" style="font-size:18px;"></div>
+  </div>
+
+  <div class="row align-middle mt-2" style="min-height: 50px;" *ngFor="let course of sortModules();let i = index">
+    <div style="width:100%" class="center">
+      <div class="bg-dark col-xs-7" style="margin-bottom: 5px;">{{course.course}}</div>
+      <div class="bg-dark col-xs-2" style="margin-bottom: 5px; padding:0px;">{{getDecimal(course.grade)}}</div>
+      <div class="bg-dark col-xs-1" style="margin-bottom: 5px; margin-right:10px; padding:0;">
+        <button (click)="edit(i)" class="mt-2 mb-2 btn btn-secondary" title="Modul bearbeiten"
+                style="height:32px; width:100%; max-width:68px; padding:0px;"><i class="fa fa-pencil-square-o"></i>
+        </button>
+      </div>
+      <div class="bg-dark col-xs-1" style="margin-bottom: 5px;padding:0;">
+        <button (click)="delete(course)" class="mt-2 mb-2 btn" title="Modul entfernen"
+                style="height:32px; width:100%; max-width:68px; padding:0px;"><i class="fa fa-trash"></i></button>
+      </div>
+    </div>
+    <div style="width: 100%; margin-bottom: 10px; margin-top:5px;" class="center" *ngIf="i == editIndex">
+      <div style="width: 100%; background-color:#e3e3e3" class="center">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-2" style="white-space: normal; padding:0px 5px;"><i class="fa fa-pencil"
+                                                                               style="margin-right:5px;"></i>neue Note:
+        </div>
+        <div class="col-xs-4" style="padding:0px 5px;">
+          <mv-slider class="my-slider" [precision]="1" [min]="1" [max]="4" [step]="0.3333333" [value]="editGrade"
+                     (change)="changeEditGrade($event)"
+          ></mv-slider>
+        </div>
+        <div class="col-xs-2"
+             style="padding:0px 0px; border-radius:5px;">{{getDecimal(editGrade)}}
+        </div>
+        <div class="col-xs-1" style="padding:0px">
+          <button class="btn" style="height:32px; width:100%; max-width:68px; padding:0px;"
+                  (click)="updateGrade(course)">
+            <i class="fa fa-check"></i></button>
+        </div>
+        <div class="col-xs-1">
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="jumbotron">
+  <h2 style="margin-top:0px;">Module hinzufügen</h2>
+  <p style="font-size: 16px;">Hier kannst du Module zu deinem Portfolio hinzufügen.</p>
+
+  <div class="searchDiv">
+    <input type="text" class="form-control" style="padding:8px;margin:15px auto;" placeholder="Suche Studienfächer..."
+           (keyup)="updateFilter($event)"/>
+  </div>
+
+  <div style="padding-right:50px;">
+    <ngx-datatable class="material expandable" [rows]="" [columns]="columns" [columnMode]="'flex'"
+                   [headerHeight]="40" [loadingIndicator]="isLoading" [footerHeight]="50" [rowHeight]="50">
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false"
+                            [headerClass]="'mobile-big-width'" [cellClass]="'mobile-big-width center'" name="Modulname"
+                            sortable="false"
+                            prop="course" class="row" [flexGrow]="4">
+      </ngx-datatable-column>
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [headerClass]="'mobile-hidden'"
+                            [cellClass]="'mobile-hidden'" name="Meine Note" sortable="false" prop="grade"
+                            [flexGrow]="4">
+      </ngx-datatable-column>
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [headerClass]="'mobile-hidden'"
+                            [cellClass]="'mobile-hidden'" name="" sortable="false" prop="grade" [flexGrow]="1">
+      </ngx-datatable-column>
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [headerClass]="'mobile-hidden'"
+                            [cellClass]="'mobile-hidden'" name="" sortable="false" prop="actions" [flexGrow]="2">
+      </ngx-datatable-column>
+      <ngx-datatable-footer></ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+  <div class="scrollable" style="max-height:257px; overflow-y: scroll">
+    <ngx-datatable #myTable class="material expandable" [rows]="searchGrades" [columns]="columns" [columnMode]="'flex'"
+                   [headerHeight]="0" [loadingIndicator]="isLoading" [footerHeight]="50" [rowHeight]="50">
+      <!-- Row Detail Template -->
+      <ngx-datatable-row-detail [rowHeight]="50" #myDetailRow (toggle)="onDetailToggle($event)">
+        <ng-template let-rowIndex="rowIndex" let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+          <div style="padding-left:20px; font-size:14px;">
+            <!--hier stehen die inhalte der eingeklappten zeile-->
+            <div class="col-xs-10" style="padding:0px 5px;">
+              <div class="col-xs-3" style="white-space: normal; padding:0px 5px;">Note:</div>
+              <div class="col-xs-7" style="padding:0px 5px;">
+                <mv-slider class="my-slider" [precision]="1" [min]="1" [max]="4" [step]="0.3333333" [value]="row.grade"
+                           (change)="setGrade1($event, rowIndex, row, expanded)"></mv-slider>
+              </div>
+              <div class="col-xs-1" style="padding:0px 5px; border-radius:5px;width: 30px; text-align: center;">
+                {{getDecimal(row.grade)}}</div>
+            </div>
+            <div class="col-xs-2" style="padding:0px 10px;">
+              <button class="btn" style="height:32px; width:100%; max-width:68px; padding:0px;" (click)="onSelect(row)">
+                <i class="fa fa-check"></i></button>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-row-detail>
+      <!--column template für pfeil-->
+      <ngx-datatable-column [headerClass]="'desktop-hidden'" [cellClass]="'desktop-hidden'" [width]="50"
+                            [resizeable]="false" [sortable]="false" [draggable]="false" [canAutoResize]="false">
+        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+          <div style="margin-top:13px;">
+            <a
+              [className]="expanded ? 'fa fa-angle-down desktop-hidden no-hover' : 'fa fa-angle-right desktop-hidden no-hover'"
+              (click)="toggleExpandRow(row)" style="padding:5px;">
+            </a>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false"
+                            [headerClass]="'mobile-big-width'" [cellClass]="'mobile-big-width center'" name="Modulname"
+                            sortable="false"
+                            prop="course" class="row" [flexGrow]="4">
+      </ngx-datatable-column>
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [headerClass]="'mobile-hidden'"
+                            [cellClass]="'mobile-hidden'" name="Meine Note" sortable="false" prop="grade"
+                            [flexGrow]="4">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          <span class="mobile-hidden" style="margin-top:15;">{{ column.name }}</span>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" let-row="row" let-value="value" ngx-datatable-cell-template>
+          <div style="margin-top:15px;">
+            <mv-slider class="my-slider mobile-hidden" [precision]="1" [min]="1" [max]="4" [step]="0.3333333"
+                       [value]="row.grade" (change)="setGrade($event, rowIndex)"></mv-slider>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [headerClass]="'mobile-hidden'"
+                            [cellClass]="'mobile-hidden'" name="" sortable="false" prop="grade" [flexGrow]="1">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          <span class="mobile-hidden" style="margin-top:16;">{{ column.name }}</span>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" let-row="row" let-value="value" ngx-datatable-cell-template>
+          <div style="border-radius:5px;width: 30px; text-align: center; margin-top:16px;">
+            {{getDecimal(row.grade)}}
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [headerClass]="'mobile-hidden'"
+                            [cellClass]="'mobile-hidden'" name="" sortable="false" prop="actions" [flexGrow]="2">
+        <ng-template let-column="column" ngx-datatable-header-template>
+          <span class="mobile-hidden">{{ column.name }}</span>
+        </ng-template>
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          <button class="mobile-hidden btn" title="Modul hinzufügen"
+                  style="height:32px; width:100%; max-width:68px; padding:0px; margin-top:9px;" (click)="onSelect(row)">
+            <i class="fa fa-check"></i>
+          </button>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-footer></ngx-datatable-footer>
+    </ngx-datatable>
+  </div>
+
+  <div style="margin-top:10px"><i>{{this.searchGrades ? this.searchGrades.length : 0}} Module gefunden</i></div>
+
+
+</div>
+

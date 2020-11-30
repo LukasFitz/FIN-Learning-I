@@ -1,0 +1,12 @@
+#container p { display: inline }
+
+p{overflow:hidden; white-space: nowrap;}
+
+@media (max-width:1210px) and (min-width:992px),
+       (max-width:500) {  /* width less than 500px */
+    .no-padding-on-small-devices{
+      padding-left : 10px;
+      padding-right: 10px;
+    }
+  
+  }

@@ -1,0 +1,69 @@
+<div class="jumbotron">
+  <h1 class="text-center font-weight-normal highlight" style="font-size:50px;">Rechte vergeben</h1>
+  <p class="text-center" style="font-size:16px;">Hier kannst du Nutzern Rechte für bestimmte Fächer zuweisen. Mit den
+    Rechten können Quizze bearbeitet werden.</p>
+
+</div>
+
+<div class="jumbotron" style="margin-top: -25px">
+  <p>Vorhandene Module</p>
+  <div>
+    <input type="text" class="form-control" style="padding:8px;margin:15px auto;"
+           placeholder="Durchsuche vorhandene Module..." (keyup)="updateFilter($event)"/></div>
+  <div class="scrollable">
+    <accordion>
+      <accordion-group *ngFor="let module of searchModules; let i = index"
+                       style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;"
+                       [isDisabled]="isDisabled"
+                       (click)="isDisabled = false">
+        <button class="btn-block clearfix" accordion-heading type="button"
+                style="background-color: transparent; border: none; box-shadow: none; ">
+          <div class="col-xs-9">
+            <div class="pull-left float-left " style="padding-top: 5px;">{{module.course}}</div>
+          </div>
+          <button class="btn btn-primary pull-right" (click)="deleteModule(module.course)" title="Kurs löschen"
+                  (click)="isDisabled = true" style="display:inline-block !important; margin: auto"><i
+            class="fa fa-trash"></i></button>
+        </button>
+        <div class="row text-left options" style="margin:0; padding-right:6px;">
+          <div class="col-12" *ngFor="let user of module.users">
+            <div class="row" style="margin-left:0px; margin-right: 0px;">
+              <div style="float:left; padding-top: 6px">{{user.email}}</div>
+              <button class="btn btn-primary pull-right" (click)="deleteUser(user, module)" title="Rechte entfernen"
+                      style="display:inline-block !important; padding-bottom: 4px; padding-right: 8px; padding-left: 8px; margin-top: 2px; margin-bottom: 2px; margin-left: 4px; margin-right: 4px;">
+                <i
+                  class="fa fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="row" style="margin-left:0px; margin-right: 0px; padding-top: 7px">
+            <div class="col-xs-12 col-md-2" style="padding-top: 7px; white-space: nowrap;">
+              <i class="fa fa-pencil"></i> neuer Nutzer:
+            </div>
+            <div class="col-xs-10 col-md-8"><input type="text" class="form-control" placeholder="E-Mail"
+                                                   [(ngModel)]="module.newUserString"></div>
+            <div class="col-xs-2 col-md-2" style="padding-right: 0px;">
+              <button class="btn btn-secondary pull-right"
+                      style="padding:0px; width:35px; height:32px; border: 2px solid #D96642;"
+                      (click)="addUser(module)">
+                <i class="fa fa-plus"></i></button>
+            </div>
+          </div>
+        </div>
+      </accordion-group>
+    </accordion>
+  </div>
+  <accordion style="padding-right:10px; margin-top:15px">
+    <accordion-group style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;" [isDisabled]="true">
+      <button class="btn-block clearfix" accordion-heading type="button"
+              style="background-color: transparent; border: none; box-shadow: none; ">
+        <div class="col-xs-10" style="padding-left: 0;">
+          <input type="text" class="form-control pull-left float-left" placeholder="neuer Modulname"
+                 [(ngModel)]="newModuleName">
+        </div>
+        <button class="btn btn-secondary pull-right" (click)="addModule()" title="Kurs hinzufügen"
+                style="display:inline-block !important; padding-top:7px; padding-bottom: 7px;"><i
+          class="fa fa-plus"></i></button>
+      </button>
+    </accordion-group>
+  </accordion>
+</div>

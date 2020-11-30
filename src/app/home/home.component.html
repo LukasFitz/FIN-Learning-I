@@ -1,0 +1,42 @@
+<div class="row">
+
+  <div class="jumbotron col-md-6" style="border-radius: 20px; border: 10px solid white;">
+    <app-mentor-searching></app-mentor-searching>
+  </div>
+
+  <div class="jumbotron col-md-6" style="border-radius: 20px; border: 10px solid white; height:505px;">
+    <app-mentor-offering></app-mentor-offering>
+  </div>
+</div>
+
+<div class="row">
+  <div class="jumbotron col-md-6" style="border-radius: 20px; border: 10px solid white;">
+    <h2 style="display: inline;">Chats </h2>
+    <div *ngIf="checkForNotifications()" style="display:inline"><i class="fa fa-circle"></i></div>
+    <!--<p style="font-size: 16px; ">Deine letzten Chats</p>-->
+    <div class="scrollable" style="max-height:274px; height:274px">
+      <div *ngFor="let chat of this.chatService.chats; let i = index" (click)="this.openChat(i);">
+
+        <div class="text-center"
+             style="padding-left:15px; padding-top: 10px; height: 70px; background-color: #F8F8F8; cursor: pointer; border-radius: 5px; margin-right: 5px;">
+          <div>
+            <p class="pull-left"
+               style="margin:0px; font-size: 17px; width: 100%; text-align: left;">{{chat.module.substring(0, 40)}}{{chat.module.length > 40 ? '...' : ''}}</p>
+            <br>
+            <p class="pull-left"
+               style="color:gray; font-size: 15px; padding-top:7px;  width: 100%;  text-align: left;">{{chat.messages[chat.messages.length - 1].sender}}
+              : {{chat.messages[chat.messages.length - 1].content.substring(0, 50 - chat.messages[chat.messages.length - 1].sender.length)}}
+              {{chat.messages[chat.messages.length - 1].content.length > 50 - chat.messages[chat.messages.length - 1].sender.length ? '...' : '' }}</p>
+          </div>
+        </div>
+        <div *ngIf="i != this.chatService.chats.length-1" style="margin-bottom: 10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jumbotron col-md-6 no-padding-on-small-devices"
+       style="border-radius: 20px; border: 10px solid white; height: 423px;">
+    <h2>Quiz</h2>
+    <app-start-quiz></app-start-quiz>
+  </div>
+</div>

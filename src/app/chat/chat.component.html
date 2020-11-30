@@ -1,0 +1,149 @@
+<div class="col-sm-3 nopadding">
+  <div style="background-color: #e3e3e3; padding:10px; border-radius: 5px; height: 91vh;" class="scroll limit">
+    <div>
+      <tabset>
+        <tab heading="Mentee" customClass="tab">
+
+          <accordion id="acc1" [closeOthers]="true" [isAnimated]="true">
+            <accordion-group style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;"
+                             [isOpen]="true">
+              <button class="btn-block clearfix" accordion-heading type="button"
+                      style="background-color: transparent; border: none; box-shadow: none; ">
+                <div class="col-xs-12" style="padding-left: 0px; margin-bottom:5px; margin-top:5px;">
+                  <div class="pull-left float-left ">Aktive Chats</div>
+                </div>
+              </button>
+              <div class="chat-container">
+                <div *ngFor="let chat of this.chatService.chats; first as isFirst; let i = index">
+                  <div *ngIf="chat.isActive && chatService.currentUserName === chat.user1Name">
+                    <div *ngIf="this.chatService.currentChat" (click)="getChat(i)" stlyle="margin-top: 20px;"
+                         [ngClass]="{'hover': this.chatService.currentChat.module !== chat.module, 'currChat': this.chatService.currentChat.module === chat.module}">
+                      <p class="pointer"
+                         style="text-align: left; font-size:100%; padding:5px; margin-bottom:0px;">{{chat.module}}</p>
+                      <div *ngIf="checkNotificationsForChat(chat)"><i class="fa fa-circle"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </accordion-group>
+            <accordion-group style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;">
+              <button class="btn-block clearfix" accordion-heading type="button"
+                      style="background-color: transparent; border: none; box-shadow: none; ">
+                <div class="col-xs-12" style="padding-left: 0px; margin-bottom:5px; margin-top:5px;">
+                  <div class="pull-left float-left ">Archivierte Chats</div>
+                  <i style="font-size: 20px;" class="fa fa-archive pull-right"></i>
+                </div>
+              </button>
+              <div class="chat-container">
+                <div *ngFor="let chat of this.chatService.chats; last as isLast; let i = index">
+                  <div *ngIf="!chat.isActive && chatService.currentUserName === chat.user1Name">
+                    <div *ngIf="this.chatService.currentChat" (click)="getChat(i)" stlyle="margin-top: 20px;"
+                         [ngClass]="{'hover': this.chatService.currentChat.module !== chat.module, 'currChat': this.chatService.currentChat.module === chat.module}">
+                      <p class="pointer"
+                         style="text-align: left; font-size:100%; padding:5px; margin-bottom:0px;">{{chat.module}}</p>
+                      <div *ngIf="checkNotificationsForChat(chat)"><i class="fa fa-circle"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </accordion-group>
+          </accordion>
+        </tab>
+        <tab heading="Mentor" customClass="tab">
+          <accordion id="acc2" [closeOthers]="true" [isAnimated]="true">
+            <accordion-group style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;"
+                             [isOpen]="true">
+              <button class="btn-block clearfix" accordion-heading type="button"
+                      style="background-color: transparent; border: none; box-shadow: none; ">
+                <div class="col-xs-12" style="padding-left: 0px; margin-bottom:5px; margin-top:5px;">
+                  <div class="pull-left float-left ">Aktive Chats</div>
+                </div>
+              </button>
+              <div class="chat-container">
+                <div *ngFor="let chat of this.chatService.chats; last as isLast; let i = index">
+                  <div *ngIf="chat.isActive && chatService.currentUserName === chat.user2Name">
+                    <div *ngIf="this.chatService.currentChat" (click)="getChat(i)" stlyle="margin-top: 20px;"
+                         [ngClass]="{'hover': this.chatService.currentChat.module !== chat.module, 'currChat': this.chatService.currentChat.module === chat.module}">
+                      <p class="pointer"
+                         style="text-align: left; font-size:100%; padding:5px; margin-bottom:0px;">{{chat.module}}</p>
+                      <div *ngIf="checkNotificationsForChat(chat)"><i class="fa fa-circle"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </accordion-group>
+            <accordion-group style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;">
+              <button class="btn-block clearfix" accordion-heading type="button"
+                      style="background-color: transparent; border: none; box-shadow: none; ">
+                <div class="col-xs-12" style="padding-left: 0px; margin-bottom:5px; margin-top:5px;">
+                  <div class="pull-left float-left ">Archivierte Chats</div>
+                  <i style="font-size: 20px;" class="fa fa-archive pull-right"></i>
+                </div>
+              </button>
+              <div class="chat-container">
+                <div *ngFor="let chat of this.chatService.chats; last as isLast; let i = index">
+                  <div *ngIf="!chat.isActive && chatService.currentUserName === chat.user2Name">
+                    <div *ngIf="this.chatService.currentChat" (click)="getChat(i)" stlyle="margin-top: 20px;"
+                         [ngClass]="{'hover': this.chatService.currentChat.module !== chat.module, 'currChat': this.chatService.currentChat.module === chat.module}">
+                      <p class="pointer"
+                         style="font-size:100%; padding:5px; margin-bottom:0px; text-align: left; ">{{chat.module}}</p>
+                      <div *ngIf="checkNotificationsForChat(chat)"><i class="fa fa-circle"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </accordion-group>
+          </accordion>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</div>
+<div class="col-sm-9 nopadding">
+  <div style="height: 91vh; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; border-radius: 5px;">
+    <p *ngIf="this.chatService.currentChat"
+       style="font-size: 25px; margin-bottom: 0px; padding:10px; white-space: nowrap; overflow:hidden"
+       class="highlight">
+      <i class="fa fa-user"></i> {{displayChatPartnerName(chatService.currentChat)}}
+      - {{ this.chatService.currentChat.module}}</p>
+    <div class="line"></div>
+
+    <div class="scroll" [style.height.px]="dynamicHeight" #scrollMe>
+      <div *ngIf="this.chatService.currentChat">
+        <div *ngFor="let message of this.chatService.currentChat.messages">
+          <div class="col-sm-12" style="padding:1px" *ngIf="this.chatService.currentUserName != message.sender">
+            <div class="your-speech-bubble pull-left" style="padding:10px; clear:both; margin-bottom: 5px;">
+              {{message.content}}</div>
+          </div>
+          <div class="col-sm-12" style="padding:1px" *ngIf="this.chatService.currentUserName === message.sender">
+            <div class="my-speech-bubble pull-right"
+                 style="text-align:right; padding:10px; width:fit-content; clear:both; margin-bottom: 5px;">
+              {{message.content}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="align-bottom" style="display: flex; margin-top:5px;" *ngIf="chatService.currentChat.isActive">
+      <!--
+        You can also add a listener when pressing enter to send the message with:
+        (keydown.enter)="addMessageToChat(chatContent.value)"
+        but for this the textarea has to be emptied before.
+      -->
+      <div class="col-md-10 col-xs-10" style="padding-right: 0px">
+        <textarea #chatContent autosize (resized)="onResized($event)" [maxRows]="5" [minRows]="1"
+                  (keydown.enter)="addMessageToChat(chatContent.value, $event)" class="form-control" id="msgTextfield"
+                  style="background-color:white; resize:none; overflow:auto; height:34px"></textarea>
+      </div>
+      <div class="col-md-2 col-xs-2" style="padding-left: 0px; display: flex; ">
+        <button class="btn align-bottom"
+                style="padding-top: 7px; padding-bottom:7px; align-self:flex-end; margin-left: 5px;"
+                (click)="addMessageToChat(chatContent.value)"
+                title="Nachricht senden"><i class="fa fa-paper-plane"></i></button>
+        <button class="btn btn-secondary pull-right"
+                style="padding-left: 10px; padding-right:10px; padding-top: 5px; padding-bottom:5px;border: 2px solid #D96642; align-self:flex-end; margin-left: 5px;"
+                (click)="archiveChat()" title="Chat archivieren"><i
+          class="fa fa-archive"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+.currPage{
+  color: #D66846 !important;
+}
+
+.currPage:hover {
+  background-color: #ffffff !important;
+  border-radius: 5px;
+}
+
+.mobile-margin {
+  margin-bottom: -2vh;
+}
+
+.highlight{font-family: P22; font-size:120%}

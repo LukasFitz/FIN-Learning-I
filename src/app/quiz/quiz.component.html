@@ -1,0 +1,385 @@
+<div class="row" *ngIf="mode=='selectquiz'">
+  <div class="jumbotron no-padding-on-small-devices">
+    <h1 class="text-center font-weight-normal highlight" style="font-size:50px; margin-bottom:80px;">Wähle ein
+      Quiz-Thema
+    </h1>
+    <div style="display:flow-root; float:none; text-align:center">
+      <div class="col-md-12 col-xs-12" style="padding:0px;">
+        <div class="col-md-3 col-xs-3" style="padding:0px">
+          <div *ngIf="editQuizes.length > 0">
+            <p style="font-size: 16px;">Ein Quiz starten</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-xs-9" style="padding:0px">
+          <select [(ngModel)]="quizId" class="select-css">
+            <option *ngFor="let quiz of quizes" [value]="quiz.id">{{quiz.name}}</option>
+          </select>
+          <div class="centerize">
+            <button class="btn btn-primary" style="margin-top:10px" (click)="startQuiz()">Quiz starten</button>
+          </div>
+        </div>
+        <div class="col-md-3 col-xs-0"></div>
+      </div>
+
+      <div *ngIf="editQuizes.length > 0" class="col-md-12 col-xs-12" style="padding:0px">
+        <hr style="padding:10px;">
+        <div class="col-md-3 col-xs-3" style="padding:0px">
+          <p style="font-size: 16px;">Durch deine Zusatzrechte darfst du hier Quizze bearbeiten.</p>
+        </div>
+        <div class="col-md-6 col-xs-9" style="padding:0px">
+          <select [(ngModel)]="editQuizId" class="select-css">
+            <option *ngFor="let quiz of editQuizes" [value]="quiz.id">{{quiz.name}}</option>
+          </select>
+          <div class="centerize">
+            <button class="btn btn-primary" style="margin-top:10px" (click)="loadQuiz(false); mode ='editQuiz'">Quiz
+              bearbeiten
+            </button>
+          </div>
+        </div>
+        <div class="col-md-3 col-xs-0"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ---------------------------------------------------------------Edit Quiz---------------------------------------------------------------------------------- -->
+
+<div *ngIf="mode=='editQuiz'">
+  <div class="jumbotron">
+    <button class="mt-2 mb-2 btn btn-secondary" title="Zurück"
+            style="height:32px; width:100%; max-width:68px; padding:0px;" (click)="mode ='selectquiz'">Zurück
+    </button>
+    <h1 class="text-center font-weight-normal highlight" style="font-size:50px;">Quiz Bearbeiten</h1>
+    <p class="text-center">Reiche eine Frage für das Fach {{quiz.name}} ein</p>
+  </div>
+  <div class="jumbotron" style="margin-top: -25px">
+    <p>Vorhandene Fragen</p>
+    <div>
+      <input type="text" class="form-control" style="padding:8px;margin:15px auto;"
+             placeholder="Durchsuche vorhandene Fragen..." (keyup)="updateFilter($event)"/></div>
+
+    <div class="scrollable" style="max-height: 500px;">
+      <accordion>
+        <accordion-group *ngFor="let question of searchQuestions; let i = index"
+                         style="border: none; box-shadow: none; padding-top: 0px; padding-bottom: 0px;"
+                         [isDisabled]="isDisabled"
+                         (click)="isDisabled = false">
+          <button class="btn-block clearfix" accordion-heading type="button"
+                  style="background-color: transparent; border: none; box-shadow: none; ">
+            <div class="pull-left float-left" style="padding-top: 5px;">{{question.name}}</div>
+            <button class="btn btn-primary pull-right" (click)="deleteQuestion(question.name)" title="Frage löschen"
+                    (click)="isDisabled = true" style="display:inline-block !important;"><i class="fa fa-trash"></i>
+            </button>
+            <button (click)="edit(question)" (click)="scroll(questionEditor)" (click)="isDisabled = true"
+                    class="pull-right btn btn-secondary" title="Frage bearbeiten"
+                    style="display:inline-block !important;"><i
+              class="fa fa-pencil-square-o"></i></button>
+          </button>
+          <div class="row text-left options">
+            <div class="col-12" *ngFor="let option of question.options">
+              <div class="option" style="padding-top: 0px;padding-bottom: 0px;">
+                <!-- <label class="container">One
+              <input type="checkbox" checked="checked">
+              <span class="checkmark"></span>
+            </label> -->
+                <label style="font-weight: normal; font-size:large; padding-left: 45px"
+                       class="font-weight-normal container" [attr.for]="option.id">{{option.name}}
+                  <input id="{{option.id}}" type="checkbox" [(ngModel)]="option.isAnswer" disabled>
+                  <!-- (change)="onSelect(question, option);" /-->
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </accordion-group>
+      </accordion>
+      <!-- <div *ngFor="let question of searchQuestions; let i = index">
+      <div style="display:inline-block !important; height:36px; padding-top:8px;">{{question}}</div>
+      <hr *ngIf="i != searchQuestions.length-1" style="margin:0; width:10%" />
+    </div> -->
+    </div>
+  </div>
+  <div #questionEditor class="jumbotron" style="margin-top: -25px">
+    <p>{{inputHeader}}
+      <button (click)="clearForm()" class="pull-right btn btn-secondary"
+              style="display:inline-block !important; margin:0; height:30px;">Felder leeren
+      </button>
+    </p>
+
+    <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+      <table>
+        <td>
+        </td>
+        <td class="col-md-12" style="padding:0px">
+          <input style="margin-bottom: 10px;" class="form-control" id="name" formControlName="name" type="text"
+                 placeholder="Frage">
+          <hr style="margin:10px">
+        </td>
+        <tr *ngFor="let option of options; let i = index;">
+          <td class="text-center center centerize">
+            <label style="margin-left:30px; width:100px; margin-top:5px;" class="container">
+              <input formControlName="option{{i}}isAnswer" type="checkbox" value="true">
+              <!-- (change)="onSelect(question, option);" /-->
+              <span class="checkmark"></span>
+            </label>
+            <!-- <input class="form-control" formControlName="option{{i}}isAnswer" type="checkbox"> -->
+          </td>
+          <td>
+            <input class="form-control" style="margin-bottom: 10px;" formControlName="option{{i}}Name" type="text"
+                   placeholder="{{option.name}}">
+          </td>
+        </tr>
+      </table>
+      <div class="form-group row" style="padding-right: 15px; padding-left: 15px;">
+        <input class="btn form-control" placeholder="Login" type="submit" value="{{buttonText}}"
+               (click)="mode ='editQuiz'" [disabled]="questionForm.invalid" [class.disabled]="questionForm.invalid">
+      </div>
+    </form>
+    <!-- <timepicker [(ngModel)]="time" [min]="minTime" [max]="maxTime" [minuteStep]="30" [hourStep]="1" [mousewheel]="true" [showMeridian]="false"></timepicker> -->
+
+  </div>
+</div>
+<!-- [disabled]="option0isAnswer || option1Name.isAnswer || option2Name.isAnswer || option3Name.isAnswer" -->
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="jumbotron" *ngIf="mode=='quiz'">
+  <button class="mt-2 mb-2 btn btn-secondary" title="Zurück"
+          style="height:32px; width:100%; max-width:68px; padding:0px;"
+          (click)="mode ='selectquiz'; isSubmitted = true">Zurück
+  </button>
+  <div id="quiz">
+    <h1 class="text-center font-weight-normal highlight" style="font-size:50px; margin-bottom:40px;">{{quiz.name}}</h1>
+
+    <div style="padding-bottom: 30px;">
+      <div class="col-xs-9 col-md-11" style="padding-left: 0px;">
+        <progressbar [value]="seconds" [max]="maxSeconds" [animate]="true"></progressbar>
+      </div>
+      <div class="col-xs-3 col-md-1 badge badge-info" style="margin-top: 1px;">
+        {{parseTime(seconds)}}
+      </div>
+    </div>
+
+    <!-- <hr /> -->
+
+
+    <div class="jumbotron" style="background-color: white; padding-top:10px;">
+
+      <div style="margin-bottom:50px;" class="text-center">
+        <button style=" float:left; border-radius: 50%; width:24px; height:24px; padding:0; margin-right:11px;"
+                class="btn" *ngIf="config.allowBack" (click)="goTo(0);"><i class="fa fa-angle-double-left"></i></button>
+        <button style="float:left; border-radius: 50%; width:24px; height:24px; padding:0;" class="btn"
+                *ngIf="config.allowBack" (click)="goTo(pager.index - 1);"><i class="fa fa-angle-left"></i></button>
+        <div style="display:inline" *ngFor="let question of displayedQuestions; let i = index">
+          <button
+            style="color:white; border-radius: 50%; font-size:12px; width:24px; height:24px; padding:0; padding-left:0px; padding-right:0px; outline: none !important; box-shadow: none;"
+            class="btn {{ isAnswered(question) == 'Answered'? 'answered': 'not-answered' }} {{ pager.index == firstQuestionIndex+i ? 'active': '' }}"
+            *ngIf="config.allowBack" (click)="goTo(firstQuestionIndex+i);">{{firstQuestionIndex + i + 1}}</button>
+          <div *ngIf="i+1 != maxDisplayedQuestions"
+               style="padding-left:3px; padding-right:3px; width:4%; height:4px; display:inline-block">
+            <div style="border: 0; border-top: 1px solid #d5d5d5;"></div>
+          </div>
+        </div>
+        <button style="float:right; border-radius: 50%; width:24px; height:24px; padding:0;" class="btn"
+                *ngIf="config.allowBack" (click)="goTo(pager.count - 1);"><i class="fa fa-angle-double-right"></i>
+        </button>
+
+        <button style="float:right; border-radius: 50%;width:24px; height:24px; padding:0; margin-right:11px;"
+                class="btn" (click)="goTo(pager.index + 1);"><i class="fa fa-angle-right"></i></button>
+        <!--<pagination *ngIf="config.showPager" direction-links="false" total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"></pagination>-->
+      </div>
+
+      <div *ngIf="mode=='quiz' && quiz">
+        <div *ngFor="let question of filteredQuestions;">
+          <!-- <div *ngIf="config.duration" class="badge badge-info float-right">Time: {{ellapsedTime}} / {{duration}}</div> -->
+
+          <!-- <div class="col-xs-12 text-center" style="margin-bottom: 5px;">
+            <div class="badge badge-info">Frage {{pager.index + 1}} von {{pager.count}}</div>
+          </div> -->
+          <h3 class="text-center">
+            <span style="font-weight:bold" [innerHTML]="question.name"></span>
+          </h3>
+          <div class="row text-left options">
+            <div class="col-5" *ngFor="let option of question.options">
+              <div class="option">
+                <!-- <label class="container">One
+                <input type="checkbox" checked="checked">
+                <span class="checkmark"></span>
+              </label> -->
+                <label style="font-weight: normal; font-size:large; padding-left: 45px"
+                       class="font-weight-normal container" [attr.for]="option.id">{{option.name}}
+                  <input id="{{option.id}}" type="checkbox" [(ngModel)]="option.selected">
+                  <!-- (change)="onSelect(question, option);" /-->
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!--<div class="row text-center" *ngIf="mode=='review'">
+      <div class="col-4 cursor-pointer" *ngFor="let question of quiz.questions; let index = index;">
+        <div (click)="goTo(index)" class="p-3 mb-2 {{ isAnswered(question) == 'Answered'? 'bg-info': 'bg-warning' }}">{{index + 1}}. {{ isAnswered(question) }}</div>
+      </div>
+    </div>-->
+      <hr/>
+      <div class="text-center">
+        <div class="badge badge-info" style="margin-top: 1px; margin-bottom:10px;">
+          {{answeredQuestionCount()}} von {{this.quiz.questions.length}} Fragen beantwortet
+        </div>
+      </div>
+      <div class="text-center">
+        <!--  <button class="btn btn-warning" (click)="mode = 'quiz'">Quiz</button>
+    <button class="btn btn-info" (click)="mode = 'review'">Review</button> -->
+        <button class="btn btn-primary" (click)="openModal(abgabe)">Quiz abgeben</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="result" *ngIf="mode=='result'">
+
+  <div class="jumbotron">
+    <button class="mt-2 mb-2 btn btn-secondary col-xs-12 col-md-2" title="Zurück"
+            style="height:32px; padding:0px; margin:0px; margin-bottom: 10px"
+            (click)="mode = 'selectquiz'; isSubmitted = true">Zur Quiz Auswahl
+    </button>
+    <div class="col-md-8"></div>
+    <button class="mt-2 mb-2 btn btn-secondary pull-right col-xs-12 col-md-2" title="Zurück"
+            style="height:32px; padding:0px; margin:0px; margin-bottom: 10px;" (click)="mode ='quiz'; startQuiz()">Quiz
+      Wiederholen
+    </button>
+    <h1 class="text-center font-weight-normal highlight" style="font-size:50px; margin-bottom:40px;">{{quiz.name}}</h1>
+
+    <div style="padding-bottom: 30px; display:flow-root;">
+      <div class="col-xs-12 col-md-4">
+        <h3 style="text-align: center; padding-bottom: 20px;">Dein Ergebnis</h3>
+        <h4 style="text-align: center;"><i style="text-align: center; font-size:18px;" class="fa fa-user"></i>
+          <div style="display:inline; padding-left:10px;">Deine
+            Antworten
+          </div>
+        </h4>
+        <h4 style="text-align: center;"><i style="text-align: center; font-size:18px;" class="fa fa-trophy"></i>
+          <div style="display:inline; padding-left:10px;">Deine
+            Bewertung
+          </div>
+        </h4>
+      </div>
+      <div class="col-xs-12 col-md-4">
+
+        <div class="container-picture">
+          <img src="../../assets/img/medal.png" width="200" height="auto" style="opacity: 0.1;">
+          <!--<div class="centered-picture">Centered</div>-->
+          <h2 class="text-center centered-picture" style="padding-bottom: 140px;">
+            {{correctAnswerCount}}/{{quiz.questions.length}}</h2>
+          <h2 class="text-center centered-picture" style="padding-bottom: 70px;">{{parseTime(passedSeconds)}}</h2>
+        </div>
+
+      </div>
+      <div class="col-xs-12 col-md-4" *ngIf="getLast5Results().length > 1">
+        <h3 style="text-align: center; padding-bottom: 20px;">Letzte {{getLast5Results().length - 1}} Aktivitäten</h3>
+        <div class="text-center">
+          <div>
+            <div class="col-xs-4 text-center" style="margin:0; font-size:18px;">Tag</div>
+            <div class="col-xs-4 text-center" style="margin:0; font-size:18px;">Ergebnis</div>
+            <div class="col-xs-4 text-center" style="margin:0; font-size:18px;">Zeit</div>
+          </div>
+          <div *ngFor="let result of getLast5Results(); let i = index">
+            <div *ngIf="i != 0" class="row">
+              <div class="col-xs-4 text-center" style="margin:0; padding-left: 25px;">{{getDate(result.startTime)}}
+              </div>
+              <div class="col-xs-4 text-center" style="margin:0; padding-left: 20px">
+                {{result.correct}}/{{result.correct + result.wrong}}</div>
+              <div class="col-xs-4 text-center" style="margin:0; padding-left: 0px">
+                {{parseTime((result.endTime - result.startTime) / 1000)}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngFor="let question of quiz.questions; let index = index">
+    <div class="jumbotron" style="margin-top: -25px; padding-bottom: 5px;">
+      <div class="result-question">
+        <p>{{index + 1}}. {{question.name}}</p>
+        <div class="bg-dark col-xs-8 col-md-10 " style="font-size:18px; margin-bottom:5px">Antworten</div>
+        <div class="bg-dark col-xs-2 col-md-1" style="font-size:18px; text-align: center;"><i class="fa fa-user"></i>
+        </div>
+        <!--<div class="bg-dark col-xs-2" style="font-size:18px;">Korrekte Antwort</div>-->
+        <div class="bg-dark col-xs-2 col-md-1" style="font-size:18px; text-align: center;"><i class="fa fa-trophy"></i>
+        </div>
+
+        <div class="row" style="margin:0;" *ngFor="let Option of question.options ">
+          <div class="bg-dark col-xs-8 col-md-10" style="margin-bottom: 5px; padding-left:30px">{{Option.name}}</div>
+
+          <div class="bg-dark col-xs-2 col-md-1 result-checkbox" style="margin-bottom: 5px; text-align: center; "
+               *ngIf="Option.selected">
+            <div><i class="fa fa-check" style="text-align:center;"></i></div>
+          </div>
+          <div class="bg-dark col-xs-2 col-md-1 result-checkbox" style="margin-bottom: 5px; text-align: center;"
+               *ngIf="!Option.selected">
+            <div><i class="fa fa-times" style="text-align:center;"></i></div>
+          </div>
+
+          <!--<div class="alert-success bg-dark col-xs-2" style="margin-bottom: 5px;"
+                *ngIf="Option.isAnswer==true"><i class="fa fa-check"></i></div>
+              <div class="alert-danger bg-dark col-xs-2" style="margin-bottom: 5px;"
+                *ngIf="Option.isAnswer==false"><i class="fa fa-times"></i></div>-->
+
+          <div class="bg-dark col-xs-2 col-md-1 result-checkbox" style="margin-bottom: 5px; text-align: center;"
+               *ngIf="Option.isAnswer && Option.selected">
+            <div class="alert-success"><i class="fa fa-check"></i></div>
+          </div>
+          <div class="bg-dark col-xs-2 col-md-1 result-checkbox" style="margin-bottom: 5px; text-align: center;"
+               *ngIf="!Option.isAnswer && !Option.selected">
+            <div class="alert-success"><i class="fa fa-check"></i></div>
+          </div>
+          <div class="bg-dark col-xs-2 col-md-1 result-checkbox" style="margin-bottom: 5px; text-align: center;"
+               *ngIf="Option.isAnswer!=Option.selected">
+            <div class="alert-danger"><i class="fa fa-times"></i></div>
+          </div>
+          <!--{{ Option.selected===Option.isAnswer? 'alert-success': 'alert-danger'}}-->
+        </div>
+        <div class="p-1 m-2 alert {{ isCorrect(question) == 'korrekt'? 'alert-success': 'alert-danger'}}"
+             style="margin-top:15px">
+          Deine Antwort ist {{isCorrect(question)}}.
+        </div>
+      </div>
+    </div>
+  </div>
+  <h4 class="alert alert-info text-center">Das Quiz ist damit beendet</h4>
+</div>
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+<!-- logout -->
+<ng-template #abgabe>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left highlight">wirklich abgeben?</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>Wenn Du jetzt abgibst, kannst du keine Änderungen mehr an deinen Antworten vornehmen.</div>
+    <div *ngIf="this.quiz.questions.length != answeredQuestionCount()">Du hast noch
+      {{this.quiz.questions.length - answeredQuestionCount()}} offene Fragen.
+    </div>
+    <div *ngIf="this.quiz.questions.length === answeredQuestionCount()">Du hast alle Fragen beantwortet.</div>
+    <hr>
+    <div class="row" style="margin:0;">
+      <button style="cursor: pointer; margin:0;" (click)="submitQuiz()" class="btn col-xs-8">Abgeben</button>
+      <button class="btn btn-secondary col-xs-4 pull-right" (click)="modalRef.hide()"
+              style="cursor: pointer; margin:0;">Zurück
+      </button>
+    </div>
+    <!--a class="dropdown-item pull-right modal-link link-no-hover" href="#" style="cursor: pointer;">Abbrechen</a>-->
+  </div>
+</ng-template>

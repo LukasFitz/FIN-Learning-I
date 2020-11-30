@@ -1,0 +1,10 @@
+.currChat {
+  color: #D66846;
+}
+
+@media only screen and (max-width: 767px) {
+  .limit {
+    max-height: 20vh;
+    margin-bottom: 5px;
+  }
+}

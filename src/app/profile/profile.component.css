@@ -1,0 +1,7 @@
+.no-hover:hover{
+    cursor:pointer !important;
+    background-color: transparent !important;
+    text-decoration:none;
+  }
+
+  

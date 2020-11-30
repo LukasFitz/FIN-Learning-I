@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": "dist/FIN-Learning",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

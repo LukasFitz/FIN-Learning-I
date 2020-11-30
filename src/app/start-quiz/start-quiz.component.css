@@ -1,0 +1,13 @@
+@media screen and (max-width : 500px){  /* width less than 500px */
+    .remove-on-small-devices{
+      display : none;
+    }
+    .extend-on-small-devices {
+        width: 33%;
+    }
+  }
+
+  .mycontent-left {
+    border-right: 1px solid rgba(145, 145, 145, 0.2);
+    
+  } 

@@ -1,0 +1,33 @@
+<h2 style="margin-top:0px;">Hilfe suchen</h2>
+<p style="font-size: 16px;">Hier findest du Mentoren für deine Module.</p>
+
+<div style="width:100%" class="searchDiv">
+  <input type="text" class="form-control" style="padding:8px;margin:15px auto;" placeholder="Suche Studienfächer..."
+         (keyup)="updateFilter($event)"/></div>
+<p style="margin: 0px">Modulname</p>
+<div class="scrollable" style="max-height:200px; height:200px; overflow-y: scroll;">
+  <ngx-datatable #myTable class="material expandable" [rows]="searchGrades" [columns]="columns" [columnMode]="'flex'"
+                 [headerHeight]="0" [loadingIndicator]="isLoading" [footerHeight]="50" [rowHeight]="50">
+    <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" [cellClass]="'center'" name=""
+                          sortable="false"
+                          prop="course" class="row" [flexGrow]="4">
+    </ngx-datatable-column>
+
+    <ngx-datatable-column [resizeable]="false" [sortable]="false" [draggable]="false" name="" sortable="false"
+                          prop="actions" [flexGrow]="2">
+      <ng-template let-column="column" ngx-datatable-header-template>
+        <span>{{ column.name }}</span>
+      </ng-template>
+      <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+        <button class="btn pull-right" title="Mentor suchen"
+                style="height:32px; width:100%; max-width:68px; padding:0px; margin-top:9px; margin-right:5px; "
+                (click)="onSelect(row)">
+          <i class="fa fa-comments"></i>
+        </button>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-footer></ngx-datatable-footer>
+  </ngx-datatable>
+</div>
+
+<div style="margin-top:10px"><i>{{this.searchGrades ? this.searchGrades.length : 0}} Module gefunden</i></div>
